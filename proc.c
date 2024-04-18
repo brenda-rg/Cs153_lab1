@@ -225,7 +225,7 @@ fork(void)
 // An exited process remains in the zombie state
 // until its parent calls wait() to find out it exited.
 void
-exit(void)
+exit(int status)
 {
   struct proc *curproc = myproc();
   struct proc *p;
@@ -261,6 +261,7 @@ exit(void)
     }
   }
 
+  curproc->status = status; //save the status before exiting the program
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
   sched();
@@ -531,4 +532,28 @@ procdump(void)
     }
     cprintf("\n");
   }
+}
+
+void
+hello(void) {
+  cprintf("\n\n Hello from your kernel space! \n\n");
+}
+
+int
+getsiblings(void) {
+  struct proc *p;
+  struct proc *curproc = myproc(); //get current pid
+  acquire(&ptable.lock);
+  int parentpid = curproc->parent->pid; //get parent pid
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->parent->pid == parentpid) { //compare parents --> if same then siblings --> return pid
+      release(&ptable.lock);
+      return p->pid;
+    }
+    if((p->parent->pid) != parentpid){
+      continue;
+    }
+  }
+  release(&ptable.lock);
+  return 0; //no matching siblings
 }
