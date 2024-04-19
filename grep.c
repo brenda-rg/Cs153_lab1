@@ -43,13 +43,13 @@ main(int argc, char *argv[])
 
   if(argc <= 1){
     printf(2, "usage: grep pattern [file ...]\n");
-    exit(1);
+    exit(2);
   }
   pattern = argv[1];
 
   if(argc <= 2){
     grep(pattern, 0);
-    exit(1);
+    exit(0);
   }
 
   for(i = 2; i < argc; i++){
@@ -60,7 +60,7 @@ main(int argc, char *argv[])
     grep(pattern, fd);
     close(fd);
   }
-  exit(1);
+  exit(0);
 }
 
 // Regexp matcher from Kernighan & Pike,
