@@ -40,13 +40,28 @@ sys_wait(void)
 }
 
 
-int sys_waitpid(void) {
+/*int sys_waitpid(void) {
   int pid;
   int* status;
   int options;
   argint(0,&pid);
-  argptr(1,(char**)&status, sizeof(int*));
+  argptr(1,(void*)&status, sizeof(status));
   argint(2, &options);
+  return waitpid(pid, status, options);
+  
+}*/
+int
+sys_waitpid(void)
+{ 
+  int pid;
+  int options = 0; // default value
+  int* status;
+  if(argint(0, &pid) < 0){
+   return -1;
+  }
+  if(argptr(1,(void*)&status, sizeof(status)) < 0){ 
+  return -1; 
+  }
   return waitpid(pid, status, options);
 }
 
